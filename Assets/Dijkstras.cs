@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Binary_Heap;
 using System;
 
+/// <summary>
+/// Contains 
+/// </summary>
 class WeightedPath : IComparable<WeightedPath>
 {
     public WeightedPath(Vector2 pos, int c)
@@ -68,8 +71,8 @@ class Dijkstras : Pathfinder
                     continue;
                 }
 
-
-                graph[current].Tile.color = Color.magenta;
+                if (edge != location) 
+                    graph[current].Debug.SetColor(Color.magenta);
 
                 //Calculates what the cost will be to move from the current tile to the next
                 int new_cost = cost_so_far[current] + CalculateCost(graph[current], graph[edge]);
@@ -77,7 +80,7 @@ class Dijkstras : Pathfinder
                 //Checks to see if we have already checked this next tile and if the current path is "cheaper"
                 if((!cost_so_far.ContainsKey(edge) || new_cost < cost_so_far[edge]))
                 {
-                    graph[edge].Tile.color = Color.green;
+                    graph[edge].Debug.SetChecked();
                     cost_so_far[edge] = new_cost;
                     frontier.Insert(new WeightedPath(edge, new_cost));
                     chain[edge] = current;
@@ -85,6 +88,7 @@ class Dijkstras : Pathfinder
             }
         }
 
+        //Reverses the path from the end back to the start and returns it
         var path = new List<Vector2>();
         Vector2 tile = goal;
         int i = 0;

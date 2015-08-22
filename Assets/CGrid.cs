@@ -66,17 +66,9 @@ class CGrid
     public void Reset()
     {
         foreach (var n in Grid)
-        {
-            GameObject tile = n.Value.TileObject;
-            for (int i = 0; i < tile.transform.childCount; ++i)
-            {
-                tile.transform.GetChild(i).gameObject.SetActive(false);
-            }
-            if(n.Value.color != Color.gray || n.Value.color != Color.cyan)
-                n.Value.color = Color.yellow;
-
+        { 
+            n.Value.ResetDisplay();
         }
-        //No need to clean the m_Graph as all the data will get overriden. 
     }
 
 

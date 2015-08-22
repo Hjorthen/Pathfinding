@@ -1,9 +1,21 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+
+/// <summary>
+/// Functions to be implented for debugging purposes 
+/// </summary>
+public interface NodeDebugDisplay
+{
+    void SetChecked();
+    void SetWall();
+    void SetPath();
+    void SetColor(Color col);
+    void SetCostDisplay(string str);
+    void SetPathDirection(float angle);
+}
 
 /// <summary>
 /// Contains information used for pathfinding from one tile to another
@@ -11,15 +23,21 @@ using System.Collections.Generic;
 public class Node : IEnumerable, IComparable<Node>
 {
     private int m_cost;
+
+    //Used to easily show debugging information
+    public NodeDebugDisplay Debug;
+
     public int Cost
     {
         set
         {
-            m_cost = value;
+            //Movement cost should never be below 1
+            m_cost = value > 0 ? value : 1;
+
             if (m_cost == int.MaxValue/2)
-                Tile.TileObject.transform.FindChild("Text").GetComponent<TextMesh>().text = "#inf";
+                Debug.SetCostDisplay("#inf");
             else
-                Tile.TileObject.transform.FindChild("Text").GetComponent<TextMesh>().text = m_cost.ToString();
+                Debug.SetCostDisplay((m_cost.ToString()));
         }
         get
         {
@@ -42,13 +60,13 @@ public class Node : IEnumerable, IComparable<Node>
         {
             if (value == true)
             {
-                Tile.color = Color.gray;
+                Debug.SetWall();
                 m_isWall = true;
                 Cost = int.MaxValue/2;
             }
             else
             {
-                Tile.color = Color.yellow;
+                Debug.SetColor(Color.yellow);
                 m_isWall = false;
                 Cost = 1;
             }
@@ -64,21 +82,16 @@ public class Node : IEnumerable, IComparable<Node>
         get;
         private set;
     }
-    public CTile Tile
-    {
-        get;
-        private set;
-    }
 
     /// <summary>
     /// Contains the position of the edges
     /// </summary>
     Vector2[] edges = new Vector2[4];
 
-    public Node(Vector2 pos, CTile tile)
+    public Node(Vector2 pos, NodeDebugDisplay debug)
     {
-        
-        Tile = tile;
+
+        Debug = debug;
         Position = pos;
         SetEdges(pos);
         IsWall = false;

@@ -50,7 +50,7 @@ public class Map : MonoBehaviour
         //Create nodemap from the grid 
         foreach(var t in Grid.Grid)
         {
-            m_Graph[t.Key] = new Node(t.Key, t.Value);
+            m_Graph[t.Key] = new Node(t.Key, t.Value as NodeDebugDisplay);
         }
 
         path = new Dijkstras();
@@ -98,6 +98,17 @@ public class Map : MonoBehaviour
         {
             MouseStartDragPos = mousePos;
         }
+
+        float scroll;
+        if((scroll = Input.GetAxis("Mouse ScrollWheel"))!=0)
+        {
+            m_Graph[tilePos].Cost += Mathf.FloorToInt(scroll);
+        }
+
+        if(Input.GetMouseButton(2))
+        {
+            m_Graph[tilePos].Cost = 500;
+        }
         if (Input.GetMouseButtonUp(0))
         {
             Node n = m_Graph[tilePos];
@@ -122,7 +133,7 @@ public class Map : MonoBehaviour
 
                     foreach (Node node in markedTiles)
                     {
-                        Grid.Grid[node.Position].color = Color.gray;
+                        Grid.Grid[node.Position].SetWall();
                         node.IsWall = true;
                         path.SetGraphDirty();
                     }
@@ -130,7 +141,7 @@ public class Map : MonoBehaviour
                 else
                 {
                     //Gets the tile which were clicked: 
-                   Grid.Grid[n.Position].color = Color.cyan;
+                    Grid.Grid[n.Position].SetStart();
                     GoalNode = tilePos;
                 }
             }
@@ -141,8 +152,8 @@ public class Map : MonoBehaviour
             List<Vector2> trail = path.GetPath(GoalNode, tilePos, m_Graph);
             foreach(Vector2 p in trail)
             {
-                if(p!=GoalNode)
-                    Grid[p].color = Color.blue;
+
+                Grid[p].SetPath();
             }
 
 

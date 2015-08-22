@@ -34,10 +34,11 @@ public class BreadCrumps : Pathfinder{
     /// <returns></returns>
     public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, Node> graph)
     {
-        var path = new List<Vector2>();
+        
 
         Search(graph, goal, location);
 
+        var path = new List<Vector2>();
         Vector2 tile = location;
         int i = 0;
         do
@@ -73,15 +74,16 @@ public class BreadCrumps : Pathfinder{
 
 
                     Node neightbour = graph[edge];
+                    //if the node is a wall, then color it gray and skip it
                     if (neightbour.IsWall)
                     {
-                        neightbour.Tile.color = Color.gray;
+                        neightbour.Debug.SetWall();
                         continue;
                     }
 
                     frontier.Enqueue(edge);
                     visited.Add(edge);
-                    neightbour.Tile.SetChecked();
+                    neightbour.Debug.SetChecked();
                     Chain[edge] = position;
 
                   
@@ -106,7 +108,7 @@ public class BreadCrumps : Pathfinder{
                         rotation = 180; //The tile is below us
                     }
 
-                    neightbour.Tile.PointArrow(rotation);
+                    neightbour.Debug.SetPathDirection(rotation);
 
                     //We found what we were looking for
                     if (position == target)
