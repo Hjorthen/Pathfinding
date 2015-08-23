@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 
@@ -18,13 +17,14 @@ class CGrid
 
     public CTile this[Vector2 i]
     {
+        //Tiles shouldn't be set this way
         private set
         {
-
+            throw new System.InvalidOperationException("Tiles shouldn't be set this way. Use private Grid instead!");
         }
         get
         {
-            return Grid[i];
+            return Grid[i]; 
         }
     }
     public Dictionary<Vector2, CTile> Grid

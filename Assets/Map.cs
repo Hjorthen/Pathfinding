@@ -13,12 +13,18 @@ public enum Directions
     RIGHT
 }
 
+public enum PathFindermode
+{
+    Breadth_First_Search,
+    Dijkstras,
+    AStar
+}
 
 public class Map : MonoBehaviour
 {
     public UnityEngine.Object Square;
     public UnityEngine.Object Arrow;
-
+    public PathFindermode Mode;
     public Vector2 Bounds;
 
 
@@ -32,6 +38,7 @@ public class Map : MonoBehaviour
     /// </summary>
     private Dictionary<Vector2, Node> m_Graph = new Dictionary<Vector2, Node>();
 
+    private PathFindermode PrevMode;
     /// <summary>
     /// Key: Grid position
     /// Value: The CTile at that position
@@ -52,10 +59,26 @@ public class Map : MonoBehaviour
         {
             m_Graph[t.Key] = new Node(t.Key, t.Value as NodeDebugDisplay);
         }
+        ChangePathfinder();
 
-        path = new Dijkstras();
     }
 
+    void ChangePathfinder()
+    {
+        switch (Mode)
+        {
+            case PathFindermode.AStar:
+                path = new Astar();
+                break;
+            case PathFindermode.Breadth_First_Search:
+                path = new BreadCrumps();
+                break;
+            case PathFindermode.Dijkstras:
+                path = new Dijkstras();
+                break;
+        }
+        PrevMode = Mode;
+    }
     Vector2 WorldToGrid(Vector2 worldPos)
     {
         int tile_x = Mathf.FloorToInt((int)worldPos.x / CGrid.TileSize);
@@ -91,6 +114,11 @@ public class Map : MonoBehaviour
 
     void Update()
     {
+        //Enables switching pathfinding during runtime. 
+        if(PrevMode!=Mode)
+        {
+            ChangePathfinder();
+        }
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 tilePos = WorldToGrid(mousePos);
 

@@ -86,23 +86,20 @@ public class Node : IEnumerable, IComparable<Node>
     /// <summary>
     /// Contains the position of the edges
     /// </summary>
-    Vector2[] edges = new Vector2[4];
+    List<Vector2> edges = new List<Vector2>();
 
     public Node(Vector2 pos, NodeDebugDisplay debug)
     {
 
         Debug = debug;
         Position = pos;
-        SetEdges(pos);
+        //SetEdges(pos);
         IsWall = false;
         Cost = UnityEngine.Random.Range(1, 3);
     }
-    public void SetEdges(Vector2 pos)
+    public void AddEdge(Vector2 pos)
     {
-        for (int i = 0; edges.Length > i; ++i)
-        {
-            edges[i] = pos + edge_offsets[i];
-        }
+        edges.
     }
 
     IEnumerator IEnumerable.GetEnumerator()

@@ -13,7 +13,10 @@ public abstract class Pathfinder
     }
     abstract public List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, Node> graph);
 
-
+    protected int CalculateCost(Node a, Node b)
+    {
+        return b.Cost;
+    }
 
 }
 

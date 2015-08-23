@@ -5,9 +5,9 @@ using Binary_Heap;
 using System;
 
 /// <summary>
-/// Contains 
+/// Contains the position nodes in a weigthed way
 /// </summary>
-class WeightedPath : IComparable<WeightedPath>
+public class WeightedPath : IComparable<WeightedPath>
 {
     public WeightedPath(Vector2 pos, int c)
     {
@@ -33,10 +33,7 @@ class WeightedPath : IComparable<WeightedPath>
 class Dijkstras : Pathfinder
 {
     
-    private int CalculateCost(Node a, Node b)
-    {
-        return b.Cost;
-    }
+    
 
     public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, Node> graph)
     {
