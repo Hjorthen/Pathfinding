@@ -36,7 +36,7 @@ public class Map : MonoBehaviour
     /// Key: Grid position
     /// Value: The Node at that position
     /// </summary>
-    private Dictionary<Vector2, Node> m_Graph = new Dictionary<Vector2, Node>();
+    private Dictionary<Vector2, TileNode> m_Graph = new Dictionary<Vector2, TileNode>();
 
     private PathFindermode PrevMode;
     /// <summary>
@@ -57,7 +57,25 @@ public class Map : MonoBehaviour
         //Create nodemap from the grid 
         foreach(var t in Grid.Grid)
         {
-            m_Graph[t.Key] = new Node(t.Key, t.Value as NodeDebugDisplay);
+            m_Graph[t.Key] = new TileNode(t.Key, t.Value as NodeDebugDisplay);
+
+        }
+
+        
+        Vector2[] edge_offsets = {
+        new Vector2(0, 1),
+        new Vector2(0, -1),
+        new Vector2(-1, 0),
+        new Vector2(1, 0) };
+
+        foreach (var n in m_Graph)
+        {
+            //Adds the sourrounding tiles as the edges: 
+            foreach (Vector2 edge in edge_offsets)
+            {
+                n.Value.AddEdge(n.Value.Position + edge);
+            }
+            
         }
         ChangePathfinder();
 
@@ -87,7 +105,7 @@ public class Map : MonoBehaviour
     }
 
     //Returns the node at world coordinates
-    Node WorldToNode(Vector2 pos)
+    TileNode WorldToNode(Vector2 pos)
     {
         Vector2 tile = WorldToGrid(pos);
         try
@@ -139,7 +157,7 @@ public class Map : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-            Node n = m_Graph[tilePos];
+            TileNode n = m_Graph[tilePos];
             if (n != null)
             {
 
@@ -149,17 +167,17 @@ public class Map : MonoBehaviour
                 {
                     int tilesMarked = Mathf.CeilToInt(draglenght.magnitude / CGrid.TileSize);
                     Vector2 unitLenght = draglenght / tilesMarked;
-                    List<Node> markedTiles = new List<Node>();
+                    List<TileNode> markedTiles = new List<TileNode>();
                     for (int i = 0; i <= tilesMarked; i++)
                     {
                         Vector2 markedTilePos = MouseStartDragPos + unitLenght * i;
-                        Node node = WorldToNode(markedTilePos);
+                        TileNode node = WorldToNode(markedTilePos);
                         if (node != null)
                             markedTiles.Add(node);
 
                     }
 
-                    foreach (Node node in markedTiles)
+                    foreach (TileNode node in markedTiles)
                     {
                         Grid.Grid[node.Position].SetWall();
                         node.IsWall = true;

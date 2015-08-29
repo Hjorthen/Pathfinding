@@ -17,10 +17,73 @@ public interface NodeDebugDisplay
     void SetPathDirection(float angle);
 }
 
+
+public abstract class Node : IEnumerable
+{
+    public Vector2 Position
+    {
+        get;
+        protected set;
+    }
+
+    /// <summary>
+    /// Contains the position of the edges
+    /// </summary>
+    HashSet<Vector2> edges = new HashSet<Vector2>();
+
+    public void AddEdge(Vector2 pos)
+    {
+        edges.Add(pos);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return edges.GetEnumerator();
+    }
+}
+
+/// <summary>
+/// Contains the position nodes in a weigthed way
+/// </summary>
+public class WeightedPath : IComparable<WeightedPath>
+{
+    public WeightedPath(Vector2 pos, int c)
+    {
+        Position = pos;
+        Cost = c;
+    }
+
+    int Cost;
+
+    public Vector2 Position;
+
+    public int CompareTo(WeightedPath other)
+    {
+        if (Cost < other.Cost)
+            return -1;
+        else if (Cost > other.Cost)
+            return 1;
+        else
+            return 0;
+    }
+}
+
+
+public class PolyGridNode : Node, IComparable<PolyGridNode>
+{
+    Dictionary<Vector2, int> DistanceCosts = new Dictionary<Vector2, int>();
+
+    public int CompareTo(PolyGridNode other)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 /// <summary>
 /// Contains information used for pathfinding from one tile to another
 /// </summary>
-public class Node : IEnumerable, IComparable<Node>
+/// 
+public class TileNode : Node, IComparable<TileNode>
 {
     private int m_cost;
 
@@ -45,11 +108,7 @@ public class Node : IEnumerable, IComparable<Node>
         }
     }
 
-    static Vector2[] edge_offsets = {
-        new Vector2(0, 1),
-        new Vector2(0, -1),
-        new Vector2(-1, 0),
-        new Vector2(1, 0) };
+   
     /// <summary>
     /// Colors the tile gray and makes it impassable 
     /// </summary>
@@ -77,18 +136,7 @@ public class Node : IEnumerable, IComparable<Node>
         }
     }
 
-    public Vector2 Position
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// Contains the position of the edges
-    /// </summary>
-    List<Vector2> edges = new List<Vector2>();
-
-    public Node(Vector2 pos, NodeDebugDisplay debug)
+    public TileNode(Vector2 pos, NodeDebugDisplay debug)
     {
 
         Debug = debug;
@@ -97,17 +145,9 @@ public class Node : IEnumerable, IComparable<Node>
         IsWall = false;
         Cost = UnityEngine.Random.Range(1, 3);
     }
-    public void AddEdge(Vector2 pos)
-    {
-        edges.
-    }
+  
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return edges.GetEnumerator();
-    }
-
-    public int CompareTo(Node other)
+    public int CompareTo(TileNode other)
     {
         if (other.Cost > Cost)
             return 1;

@@ -10,7 +10,7 @@ using UnityEngine;
         { 
             return Mathf.Abs((int)(a.x - b.x)) + Mathf.Abs((int)(a.y - b.y));
         }
-        public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, Node> graph)
+        public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph)
         {
             BinaryMinHeap<WeightedPath> frontier = new BinaryMinHeap<WeightedPath>();
             Dictionary<Vector2, Vector2> chained_path = new Dictionary<Vector2, Vector2>();
@@ -30,10 +30,12 @@ using UnityEngine;
 
                 foreach(Vector2 adjecentNode in graph[currentNode])
                 {
+                /*
                     if (!((adjecentNode.x < 16) && (adjecentNode.y < 16) && (adjecentNode.x > -1) && (adjecentNode.y > -1)) || graph[adjecentNode].IsWall)
                     {
                         continue;
                     }
+                */
                         int newCost = cost_so_far[currentNode] + CalculateCost(graph[currentNode], graph[adjecentNode]);
                         if((!cost_so_far.ContainsKey(adjecentNode) || newCost < cost_so_far[adjecentNode]))
                         {

@@ -4,38 +4,12 @@ using System.Collections.Generic;
 using Binary_Heap;
 using System;
 
-/// <summary>
-/// Contains the position nodes in a weigthed way
-/// </summary>
-public class WeightedPath : IComparable<WeightedPath>
-{
-    public WeightedPath(Vector2 pos, int c)
-    {
-        Position = pos;
-        Cost = c;
-    }
-   
-    int Cost;
-
-    public Vector2 Position;
-
-    public int CompareTo(WeightedPath other)
-    {
-        if (Cost < other.Cost)
-            return -1;
-        else if (Cost > other.Cost)
-            return 1;
-        else
-            return 0;    
-    }
-}
-
 class Dijkstras : Pathfinder
 {
     
     
 
-    public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, Node> graph)
+    public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph)
     {
         //Using a binaryMinHeap as a priority queue 
         var frontier = new BinaryMinHeap<WeightedPath>();

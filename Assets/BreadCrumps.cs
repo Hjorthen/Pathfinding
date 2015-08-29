@@ -32,7 +32,7 @@ public class BreadCrumps : Pathfinder{
     /// <param name="graph"></param>
     /// <param name="begin"></param>
     /// <returns></returns>
-    public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, Node> graph)
+    public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph)
     {
         
 
@@ -52,7 +52,7 @@ public class BreadCrumps : Pathfinder{
         return path;
     }
 
-    void Search(Dictionary<Vector2, Node> graph, Vector2 begin, Vector2 target)
+    void Search(Dictionary<Vector2, TileNode> graph, Vector2 begin, Vector2 target)
     {
         Debug.Log("Search started");
         var frontier = new Queue<Vector2>();
@@ -66,14 +66,14 @@ public class BreadCrumps : Pathfinder{
 
             var position = frontier.Dequeue();
             Debug.Log("Checking node: " + position);
-            Node node = graph[position];
+            TileNode node = graph[position];
             foreach (Vector2 edge in node)
             {
                 if (!visited.Contains(edge) && (edge.x < 16) && (edge.y < 16) && (edge.x > -1) && (edge.y > -1))
                 {
 
 
-                    Node neightbour = graph[edge];
+                    TileNode neightbour = graph[edge];
                     //if the node is a wall, then color it gray and skip it
                     if (neightbour.IsWall)
                     {
