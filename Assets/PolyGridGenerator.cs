@@ -21,7 +21,7 @@ public class PolyGridGenerator : MonoBehaviour {
         GameObject monster = GameObject.FindGameObjectWithTag("Finish");
         Vector2 monsterPos = monster.transform.position;
 
-        //Workaround for the rays hitting the unit when exploring vertexes, which results in no valid paths
+        //Workaround for the rays hitting the unit itself when exploring vertexes, which results in no valid paths
         int targetLayer = target.layer;
         target.layer = 2;
 
@@ -31,11 +31,12 @@ public class PolyGridGenerator : MonoBehaviour {
 
 
         Gizmos.color = Color.magenta;
-        BoxCollider2D[] colliders = GameObject.FindObjectsOfType<BoxCollider2D>();
+        //Was BoxCollider2D
+        Collider2D[] colliders = GameObject.FindObjectsOfType<Collider2D>();
         Vector2[] corners = { new Vector2(-1, -1), new Vector2(1, 1), new Vector2(-1, 1), new Vector2(1, -1) };
         //List<Vector2> Vertices = new List<Vector2>();
 
-        foreach (BoxCollider2D collider in colliders)
+        foreach (Collider2D collider in colliders)
         {
 
             //Objects with rigidbodies are skipped because they WILL move a lot
@@ -48,19 +49,53 @@ public class PolyGridGenerator : MonoBehaviour {
             //BOUNDS IS A AABB CHECK! Which means it can't be used to figure out the points.. 
             Bounds area = collider.bounds;
             Gizmos.DrawSphere(area.center, 5);
-            
+
             //Finds each corner of each and every boxcollider
-            foreach(Vector2 cornerOffset in corners)
-            {
-                //The + 0.1f is to avoid the raycast from colliding with the collision box which we are trying to avoid
-                Vector2 cornerPos = new Vector2(collider.offset.x + cornerOffset.x * (collider.size.x/ 2 + 0.1f), collider.offset.y + cornerOffset.y * (collider.size.y/2 + 0.1f));
-                Vector2 worldPos = collider.transform.TransformPoint(cornerPos);
-                //Adds each corner to a list of vertices which can be used to generate the map
-                PolyGrid.Add(worldPos, new TileNode(worldPos, new LineDebugger()));
-                Gizmos.DrawSphere(worldPos, 5);
+            
+                BoxCollider2D boxCollider = collider as BoxCollider2D;
+                CircleCollider2D circleCollider;
+                PolygonCollider2D polyCollider;
+                
+                if ((boxCollider = collider as BoxCollider2D) != null)
+                {
+                    foreach (Vector2 cornerOffset in corners)
+                    {
+                        //The + 0.1f is to avoid the raycast from colliding with the collision box which we are trying to avoid
+                        Vector2 cornerPos = new Vector2(collider.offset.x + cornerOffset.x * (boxCollider.size.x / 2 + 0.1f), collider.offset.y + cornerOffset.y * (boxCollider.size.y / 2 + 0.1f));
+                        Vector2 worldPos = collider.transform.TransformPoint(cornerPos);
+                        //Adds each corner to a list of vertices which can be used to generate the map
+                        PolyGrid.Add(worldPos, new TileNode(worldPos, new LineDebugger()));
+                        Gizmos.DrawSphere(worldPos, 5);
 
-            }
-
+                    }
+                continue;
+                }
+                else if((circleCollider = collider as CircleCollider2D) != null)
+                {
+                   
+                    foreach (Vector2 offset in corners)
+                    {
+                        
+                        Vector2 offsetPos = circleCollider.offset + (circleCollider.radius+1)*offset;
+                        Vector2 worldPos = collider.transform.TransformPoint(offsetPos);
+                        PolyGrid.Add(worldPos, new TileNode(worldPos, new LineDebugger()));
+                        Gizmos.DrawSphere(worldPos, 5);
+                    }
+                continue;
+                }
+                else if((polyCollider = collider as PolygonCollider2D)!=null)
+                {
+                    //Loops over each vertex in the polygon collider and transform them to world space. 
+                    foreach(Vector2 point in polyCollider.points)
+                    {
+                        //By how much should we multiply the vector with to incrase its lenght by 1?
+                        float multiplyLenght = (point.magnitude + 1) / point.magnitude;
+                        Vector2 worldPos = collider.transform.TransformPoint(point * multiplyLenght);
+                        PolyGrid.Add(worldPos, new TileNode(worldPos, new LineDebugger()));
+                    Gizmos.DrawSphere(worldPos, 5);
+                    }
+                }
+    
 
         }
         Debug.Log("Found " + colliders.Length + " colliders");
