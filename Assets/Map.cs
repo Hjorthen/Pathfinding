@@ -86,7 +86,7 @@ public class Map : MonoBehaviour
         switch (Mode)
         {
             case PathFindermode.AStar:
-                path = new Astar();
+                path = new AStarSquareGrid();
                 break;
             case PathFindermode.Breadth_First_Search:
                 path = new BreadCrumps();

@@ -6,8 +6,11 @@ using System;
 
 class Dijkstras : Pathfinder
 {
-    
-    
+
+    protected int CalculateCost(TileNode a, TileNode b)
+    {
+        return b.Cost;
+    }
 
     public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph)
     {

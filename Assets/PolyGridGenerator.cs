@@ -102,10 +102,10 @@ public class PolyGridGenerator : MonoBehaviour {
         }
         Debug.Log("Casted " + rayCounter + " rays on " + PolyGrid.Count + " vertices");
       
-        Astar path = new Astar();
+        Astar path = new AStarPolyGrid();
 
-        Vector2 prev = monsterPos;
-        List<Vector2> route = path.GetPath(prev, goalPos, PolyGrid);
+        Vector2 prev = goalPos;
+        List<Vector2> route = path.GetPath(monsterPos, goalPos, PolyGrid);
         Debug.Log("Route contained: " + route.Count);
         foreach(Vector2 waypoint in route)
         {

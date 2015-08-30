@@ -47,13 +47,13 @@ public abstract class Node : IEnumerable
 /// </summary>
 public class WeightedPath : IComparable<WeightedPath>
 {
-    public WeightedPath(Vector2 pos, int c)
+    public WeightedPath(Vector2 pos, float c)
     {
         Position = pos;
         Cost = c;
     }
 
-    int Cost;
+    float Cost;
 
     public Vector2 Position;
 

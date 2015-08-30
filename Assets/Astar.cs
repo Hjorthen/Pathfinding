@@ -4,17 +4,44 @@ using Binary_Heap;
 using UnityEngine;
 
 
-   public class Astar : Pathfinder
+public class AStarSquareGrid : Astar
+{
+    protected override float CalculateCost(TileNode a, TileNode b)
     {
-        int heuristic(Vector2 a, Vector2 b)
-        { 
-            return Mathf.Abs((int)(a.x - b.x)) + Mathf.Abs((int)(a.y - b.y));
-        }
-        public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph)
+        return b.Cost;
+    }
+
+    protected override float heuristic(Vector2 a, Vector2 b)
+    {
+        return (a.x - b.x) + (a.y - b.y);
+    }
+}
+
+public class AStarPolyGrid : Astar
+{
+    protected override float heuristic(Vector2 a, Vector2 b)
+    {
+            return (a - b).magnitude;
+    }
+
+    protected override float CalculateCost(TileNode a, TileNode b)
+    {
+            return (a.Position - b.Position).magnitude;
+    }
+}
+
+   public abstract class Astar : Pathfinder
+    {
+        protected abstract float heuristic(Vector2 a, Vector2 b);
+
+        protected abstract float CalculateCost(TileNode a, TileNode b);
+        
+
+    public override List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph)
         {
             BinaryMinHeap<WeightedPath> frontier = new BinaryMinHeap<WeightedPath>();
             Dictionary<Vector2, Vector2> chained_path = new Dictionary<Vector2, Vector2>();
-            Dictionary<Vector2, int> cost_so_far = new Dictionary<Vector2, int>();
+            Dictionary<Vector2, float> cost_so_far = new Dictionary<Vector2, float>();
 
             frontier.Insert(new WeightedPath(location, 0));
             cost_so_far.Add(location, 0);
@@ -36,12 +63,12 @@ using UnityEngine;
                         continue;
                     }
                 */
-                        int newCost = cost_so_far[currentNode] + CalculateCost(graph[currentNode], graph[adjecentNode]);
+                        float newCost = cost_so_far[currentNode] + CalculateCost(graph[currentNode], graph[adjecentNode]);
                         if((!cost_so_far.ContainsKey(adjecentNode) || newCost < cost_so_far[adjecentNode]))
                         {
                             graph[adjecentNode].Debug.SetChecked();
                             cost_so_far[adjecentNode] = newCost;
-                            int priority = newCost + heuristic(goal, adjecentNode);
+                            float priority = newCost + heuristic(goal, adjecentNode);
                             frontier.Insert(new WeightedPath(adjecentNode, priority));
                             chained_path[adjecentNode] = currentNode;
                         }

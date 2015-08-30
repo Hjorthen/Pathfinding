@@ -13,11 +13,5 @@ public abstract class Pathfinder
     }
     abstract public List<Vector2> GetPath(Vector2 location, Vector2 goal, Dictionary<Vector2, TileNode> graph);
 
-    //Calculates costs based on distance. Move code to node?
-    protected int CalculateCost(TileNode a, TileNode b)
-    {
-        return (int)(a.Position - b.Position).magnitude;
-    }
-
 }
 
