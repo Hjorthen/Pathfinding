@@ -35,6 +35,14 @@ public abstract class Node : IEnumerable
     {
         edges.Add(pos);
     }
+    public void RemoveEdge(Vector2 pos)
+    {
+        edges.Remove(pos);
+    }
+    public bool HasEdge(Vector2 pos)
+    {
+        return edges.Contains(pos);
+    }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
